@@ -31,42 +31,26 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxAPZbEpuvU_BDdMAH4iHgSQcRX241bHWCrKmjCuOwnCtItRkPwA4o_5h_pkoo87MDGDg/exec";
 
     document.getElementById("userForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const start = document.getElementById("start").value;
-      const expiry = document.getElementById("expiry").value;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const start = document.getElementById("start").value;
+  const expiry = document.getElementById("expiry").value;
 
-      const data = {
-        action: "addUser",
-        name, email, start, expiry
-      };
+  const url = `${API_URL}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&start=${start}&expiry=${expiry}`;
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
+  try {
+    const res = await fetch(url); // GET method, no CORS error
+    const result = await res.text();
+    document.getElementById("response").innerText = result;
+    document.getElementById("userForm").reset();
+  } catch (error) {
+    document.getElementById("error").innerText = "Something went wrong.";
+    console.error("Fetch error:", error);
+  }
+});
 
-        const result = await res.json();
-
-        if (result.status === "success") {
-          document.getElementById("response").innerText = result.message;
-          document.getElementById("error").innerText = "";
-          document.getElementById("userForm").reset();
-        } else {
-          document.getElementById("error").innerText = result.message;
-          document.getElementById("response").innerText = "";
-        }
-      } catch (error) {
-        document.getElementById("error").innerText = "Something went wrong. Please try again.";
-        console.error("Fetch error:", error);
-      }
-    });
   </script>
 </body>
 </html>
