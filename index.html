@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration Panel</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="container max-w-lg bg-white shadow-xl rounded-2xl p-6">
+    <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">📋 Add New User</h2>
+
+    <form id="userForm" class="space-y-4">
+      <input type="text" id="name" class="form-control" placeholder="Name" required>
+      <input type="email" id="email" class="form-control" placeholder="Email" required>
+      <input type="date" id="start" class="form-control" placeholder="Start Date" required>
+      <input type="date" id="expiry" class="form-control" placeholder="Expiry Date" required>
+      <button type="submit" class="btn btn-primary w-full">Add User</button>
+    </form>
+
+    <div id="response" class="mt-4 text-center text-green-600 font-medium"></div>
+    <div id="error" class="mt-2 text-center text-red-500"></div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxAPZbEpuvU_BDdMAH4iHgSQcRX241bHWCrKmjCuOwnCtItRkPwA4o_5h_pkoo87MDGDg/exec";
+
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const start = document.getElementById("start").value;
+      const expiry = document.getElementById("expiry").value;
+
+      const data = {
+        action: "addUser",
+        name, email, start, expiry
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        const result = await res.json();
+
+        if (result.status === "success") {
+          document.getElementById("response").innerText = result.message;
+          document.getElementById("error").innerText = "";
+          document.getElementById("userForm").reset();
+        } else {
+          document.getElementById("error").innerText = result.message;
+          document.getElementById("response").innerText = "";
+        }
+      } catch (error) {
+        document.getElementById("error").innerText = "Something went wrong. Please try again.";
+        console.error("Fetch error:", error);
+      }
+    });
+  </script>
+</body>
+</html>
